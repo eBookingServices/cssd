@@ -1,0 +1,12 @@
+{
+	"name": "cssd",
+	"version": "0.1.0",
+	"description": "CSS library for D",
+	"copyright": "Copyright © 2015, Márcio Martins",
+	"authors": ["Márcio Martins"],
+	"license": "MIT License",
+    "targetType": "library",
+    "targetName": "cssd",
+	"dependencies": {
+	}
+}
