@@ -20,7 +20,7 @@ struct CSSOMBuilder {
 Example usage:
 ```d
 auto builder = CSSOMBuilder();
-parseHTML(`h1:hover > span#highlight { background: black; }`, builder);
+parseCSS(`h1:hover > span#highlight { background: black; }`, builder);
 ```
 
 Example selector usage:
