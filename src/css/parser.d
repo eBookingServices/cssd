@@ -61,7 +61,7 @@ void parseCSS(Handler, size_t options = ParserOptions.Default)(const(char)[] sou
 	while (ptr != end) {
 		final switch (state) with (ParserStates) {
 		case Global:
-			if ((*ptr == '.') || (*ptr == '#') || isAlpha(*ptr)) {
+			if ((*ptr == '.') || (*ptr == '#') || (*ptr == '*') || (*ptr == ':') || isAlpha(*ptr)) {
 				start = ptr;
 				state = Selector;
 			} else if (*ptr == '@') {
@@ -152,13 +152,13 @@ void parseCSS(Handler, size_t options = ParserOptions.Default)(const(char)[] sou
 			break;
 
 		case PropertyValue:
-			while ((ptr != end) && (*ptr != ';') && (*ptr != '}') && (*ptr != '/') && (*ptr != '\"') && (*ptr != '\''))
+			while ((ptr != end) && (*ptr != ';') && (*ptr != '}') && (*ptr != '/') && (*ptr != '\"') && (*ptr != '\'') && (*ptr != '\n'))
 				++ptr;
 			if (ptr == end)
 				continue;
 
 			if ((*ptr != '/') || ((ptr + 1) == end) || (*(ptr + 1) != '*')) {
-				if (*ptr == ';') {
+				if ((*ptr == ';') || (*ptr == '\n')) {
 					if (start < ptr)
 						handler.onPropertyValue(start[0..ptr-start].strip);
 					handler.onPropertyValueEnd();

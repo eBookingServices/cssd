@@ -195,6 +195,10 @@ struct Selector {
 				} else if (*ptr == '[') {
 					state = AttrName;
 					start = ptr + 1;
+				} else if (*ptr == ':') {
+					rule.flags_ |= Rule.Flags.HasAny;
+					state = PostIdentifier;
+					continue;
 				} else if (isAlpha(*ptr)) {
 					state = Tag;
 					start = ptr;
