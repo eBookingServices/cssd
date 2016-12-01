@@ -129,7 +129,7 @@ private struct Rule {
 		return true;
 	}
 
-	@property Relation relation() {
+	@property Relation relation() const {
 		return relation_;
 	}
 
@@ -164,6 +164,10 @@ struct Selector {
 			PseudoArgs,
 			Relation,
 		}
+
+		size_t ids;
+		size_t tags;
+		size_t classes;
 
 		value = value.strip;
 		auto source = uninitializedArray!(char[])(value.length + 1);
@@ -243,6 +247,7 @@ struct Selector {
 
 				rule.flags_ |= Rule.Flags.HasTag;
 				rule.tag_ = start[0..ptr-start];
+				++tags;
 
 				state = PostIdentifier;
 				continue;
@@ -257,6 +262,7 @@ struct Selector {
 				rule.match_ = Rule.MatchType.ContainWord;
 				rule.attr_ = "class";
 				rule.value_ = start[0..ptr-start];
+				++classes;
 
 				state = PostIdentifier;
 				break;
@@ -271,6 +277,7 @@ struct Selector {
 				rule.match_ = Rule.MatchType.Exact;
 				rule.attr_ = "id";
 				rule.value_ = start[0..ptr-start];
+				++ids;
 
 				state = PostIdentifier;
 				break;
@@ -284,6 +291,8 @@ struct Selector {
 				rule.flags_ |= Rule.Flags.HasAttr;
 				rule.flags_ |= Rule.Flags.CaseSensitive;
 				rule.attr_ = start[0..ptr-start];
+				++classes;
+
 				state = AttrOp;
 				continue;
 
@@ -453,6 +462,7 @@ struct Selector {
 
 		rules.reverse();
 		selector.rules_ = rules;
+		selector.specificity_ = (ids << 14) | (classes << 7) | (tags & 127);
 
 		return selector;
 	}
@@ -520,9 +530,14 @@ struct Selector {
 		return true;
 	}
 
+	@property size_t specificity() const {
+		return specificity_;
+	}
+
 private:
 	const(char)[] source_;
 	Rule[] rules_;
+	size_t specificity_;
 }
 
 
